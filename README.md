@@ -1,79 +1,77 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
-
 # Getting Started
 
->**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
+## Step 1: Config local server
 
-## Step 1: Start the Metro Server
-
-First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
-
-To start Metro, run the following command from the _root_ of your React Native project:
+1. Tạo thư mục mới cho server:
 
 ```bash
-# using npm
-npm start
-
-# OR using Yarn
-yarn start
+   mkdir graphql-server
+   cd graphql-server
 ```
 
-## Step 2: Start your Application
-
-Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
-
-### For Android
+2. Khởi tạo npm package:
 
 ```bash
-# using npm
-npm run android
-
-# OR using Yarn
-yarn android
+     npm init -y
 ```
 
-### For iOS
+3. Cài đặt các gói cần thiết:
 
 ```bash
-# using npm
-npm run ios
-
-# OR using Yarn
-yarn ios
+     npm install express graphql express-graphql uuid
 ```
 
-If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
+4. Tạo file index.js chứa code
+5. Chạy server:
 
-This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
+```bash
+   node index.js
+```
 
-## Step 3: Modifying your App
+## Step 2: Cấu hình GraphQL Client với urql trong app
 
-Now that you have successfully run the app, let's modify it.
+add các package cần thiết và xem doc dưới
+https://commerce.nearform.com/open-source/urql/docs/basics/react-preact/
 
-1. Open `App.tsx` in your text editor of choice and edit some lines.
-2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
+1. Cài đặt các gói cần thiết:
 
-   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
+```bash
+   npm install express graphql express-graphql uuid --legacy-peer-deps
+    "@urql/exchange-graphcache": "^7.1.2",
+    "codegen": "^0.1.0",
+    "express": "^4.19.2",
+    "graphql-codegen": "^0.4.0",
+    "graphql-ws": "^5.16.0",
+    "urql": "^4.1.0"
 
-## Congratulations! :tada:
+```
 
-You've successfully run and modified your React Native App. :partying_face:
+2. Add urql
 
-### Now what?
+```bash
+   npm install --save urql
+```
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [Introduction to React Native](https://reactnative.dev/docs/getting-started).
+3. Tạo file client.ts
 
-# Troubleshooting
+```bash
+   const client = new Client({
+  url: 'http://localhost:3000/graphql',
+  exchanges: [cacheExchange, fetchExchange],
+});
+```
 
-If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+4. Tạo các Truy vấn và Mutation
+   Tạo file queries.ts
+5. Cập nhật file cấu hình codegen.ts, sau đó
+   update script trong package.json
+   "scripts": {
+   "codegen": "graphql-codegen",
+   },
+   sau đó
 
-# Learn More
+```bash
+   npm run codegen
+```
 
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+6. Sử dụng GraphQL Client
