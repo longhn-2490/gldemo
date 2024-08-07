@@ -17,25 +17,28 @@ export type Scalars = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  addUser?: Maybe<User>;
+  addProduct?: Maybe<Product>;
 };
 
 
-export type MutationAddUserArgs = {
-  age: Scalars['Int']['input'];
-  birthdate: Scalars['String']['input'];
+export type MutationAddProductArgs = {
   name: Scalars['String']['input'];
+  price: Scalars['Int']['input'];
+};
+
+export type Product = {
+  __typename?: 'Product';
+  id: Scalars['ID']['output'];
+  name: Scalars['String']['output'];
+  price: Scalars['Int']['output'];
 };
 
 export type Query = {
   __typename?: 'Query';
-  users: Array<User>;
+  products: Array<Product>;
 };
 
-export type User = {
-  __typename?: 'User';
-  age: Scalars['Int']['output'];
-  birthdate: Scalars['String']['output'];
-  id: Scalars['ID']['output'];
-  name: Scalars['String']['output'];
+export type Subscription = {
+  __typename?: 'Subscription';
+  productAdded: Product;
 };

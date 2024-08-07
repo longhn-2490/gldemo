@@ -1,3 +1,8 @@
 {
-  "extends": "@react-native/typescript-config/tsconfig.json"
+  "extends": "@react-native/typescript-config/tsconfig.json",
+  "include": ["src/"],
+  "compilerOptions": {
+    "typeRoots": ["./node_modules/@types", "./typings"],
+    "allowSyntheticDefaultImports": true
+  }
 }

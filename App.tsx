@@ -1,83 +1,61 @@
 // App.tsx
-import React from 'react';
 import {
-  Button,
-  FlatList,
-  SafeAreaView,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
-import {Provider, useMutation, useQuery} from 'urql';
+  DarkTheme,
+  DefaultTheme,
+  NavigationContainer,
+  Theme,
+} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
+import React from 'react';
+import {Text, TouchableOpacity} from 'react-native';
+import {Provider} from 'urql';
+import {NetInfoProvider} from './src/context/NetInfoContext';
+import ThemeProviderWrapper, {
+  useThemeContext,
+} from './src/context/ThemeContext';
 import client from './src/graphql/client';
-import {ADD_USER, GET_USERS} from './src/graphql/queries';
-const UsersList = () => {
-  const [{data, fetching, error}] = useQuery({
-    query: GET_USERS,
-  });
+import HomeScreen from './src/screens/HomeScreen';
+import LoginScreen from './src/screens/LoginScreen';
+import {darkTheme, lightTheme} from './src/theme';
 
-  if (fetching) {
-    return <Text>Loading...</Text>;
-  }
-  if (error) {
-    console.log(error.networkError);
-    return <Text>Error: {error.message}</Text>;
-  }
+const Stack = createStackNavigator();
+
+const NavigationWrapper = () => {
+  const {toggleTheme, isDarkTheme} = useThemeContext();
+
+  const navigationTheme: Theme = isDarkTheme ? DarkTheme : DefaultTheme;
+  const customTheme = isDarkTheme ? darkTheme : lightTheme;
 
   return (
-    <FlatList
-      data={data.users}
-      keyExtractor={item => item.id}
-      renderItem={({item}) => (
-        <View>
-          <Text>Name: {item.name}</Text>
-          <Text>Age: {item.age}</Text>
-          <Text>Birthdate: {item.birthdate}</Text>
-        </View>
-      )}
-    />
-  );
-};
-
-const AddUser = () => {
-  const [, addUser] = useMutation(ADD_USER);
-  const [name, setName] = React.useState('');
-  const [age, setAge] = React.useState('');
-  const [birthdate, setBirthdate] = React.useState('');
-
-  const handleSubmit = () => {
-    addUser({name, age: parseInt(age), birthdate});
-    setName('');
-    setAge('');
-    setBirthdate('');
-  };
-
-  return (
-    <View>
-      <TextInput placeholder="Name" value={name} onChangeText={setName} />
-      <TextInput
-        placeholder="Age"
-        value={age}
-        onChangeText={setAge}
-        keyboardType="numeric"
-      />
-      <TextInput
-        placeholder="Birthdate"
-        value={birthdate}
-        onChangeText={setBirthdate}
-      />
-      <Button title="Add User" onPress={handleSubmit} />
-    </View>
+    <NavigationContainer theme={navigationTheme}>
+      <Stack.Navigator
+        screenOptions={{
+          headerStyle: {
+            backgroundColor: customTheme.colors.headerBackground,
+          },
+          headerTintColor: customTheme.colors.headerText,
+          // eslint-disable-next-line react/no-unstable-nested-components
+          headerRight: () => (
+            <TouchableOpacity onPress={toggleTheme}>
+              <Text style={{color: customTheme.colors.headerText}}>Toggle</Text>
+            </TouchableOpacity>
+          ),
+        }}>
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="Home" component={HomeScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 };
 
 const App = () => {
   return (
     <Provider value={client}>
-      <SafeAreaView>
-        <AddUser />
-        <UsersList />
-      </SafeAreaView>
+      <ThemeProviderWrapper>
+        <NetInfoProvider>
+          <NavigationWrapper />
+        </NetInfoProvider>
+      </ThemeProviderWrapper>
     </Provider>
   );
 };
